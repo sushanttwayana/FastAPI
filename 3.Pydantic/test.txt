@@ -1,0 +1,205 @@
+### Type validation -========================================================
+
+from pydantic import BaseModel
+
+class Patient(BaseModel):
+    name: str
+    age : int
+    # weight: float
+    
+def insert_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print('inserted')
+    
+def update_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print('inserted')
+    
+    
+
+patient_info = {'name': 'sushant', 'age': 24}
+
+patient1 = Patient(**patient_info)
+
+# print(patient1)
+
+insert_patient_data(patient1)
+
+### data types in pydantic  ============================================================
+
+
+
+
+from pydantic import BaseModel
+from typing import List, TypedDict, Dict
+
+class Patient(BaseModel):
+    name: str
+    age : int
+    weight: float
+    married: bool
+    allergies: List[str] 
+    contact_details: Dict[str, str]
+    
+def insert_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print(patient.married)
+    print(patient.allergies)
+    print(patient.contact_details)
+    print('inserted')
+    
+def update_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print('inserted')
+    
+    
+
+patient_info = {'name': 'sushant', 'age': 24, 'weight': 72, 'married': False, 'allergies': ['pollen', 'dust'], 'contact_details': {'email': 'abc@gmail.com', 'phone': '1234567890'} }
+
+patient1 = Patient(**patient_info)
+
+# print(patient1)
+
+insert_patient_data(patient1) 
+
+
+
+
+
+### ================================================ required and optional field in pydantic  ============================================================
+
+from pydantic import BaseModel
+from typing import List, TypedDict, Dict, Optional
+
+class Patient(BaseModel):
+    name: str
+    age : int
+    weight: float
+    married: bool = False
+    
+    ## default value is none
+    allergies: Optional[List[str]] = None                                              #### 2 level validation all values are str inside list
+    contact_details: Dict[str, str]
+    
+def insert_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print(patient.married)
+    print(patient.allergies)
+    print(patient.contact_details)
+    print('inserted')
+    
+def update_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print('inserted')
+    
+    
+
+# patient_info = {'name': 'sushant', 'age': 24, 'weight': 72, 'married': False, 'allergies': ['pollen', 'dust'], 'contact_details': {'email': 'abc@gmail.com', 'phone': '1234567890'} }
+patient_info = {'name': 'sushant', 'age': 24, 'weight': 72, 'contact_details': {'email': 'abc@gmail.com', 'phone': '1234567890'} }
+
+patient1 = Patient(**patient_info)
+
+# print(patient1)
+
+insert_patient_data(patient1)
+
+
+
+##### ============================================    pydantic data validation   ================================================================
+
+from pydantic import BaseModel, EmailStr, AnyUrl
+from typing import List, TypedDict, Dict, Optional
+
+class Patient(BaseModel):
+    name: str
+    age : int
+    email: EmailStr
+    weight: float
+    married: bool = False
+    linkedin_url: AnyUrl
+    ## default value is none
+    allergies: Optional[List[str]] = None                                              #### 2 level validation all values are str inside list
+    contact_details: Dict[str, str]
+    
+def insert_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print(patient.married)
+    print(patient.allergies)
+    print(patient.contact_details)
+    print(patient.linkedin_url)
+    print('inserted')
+    
+def update_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print('inserted')
+    
+    
+
+# patient_info = {'name': 'sushant', 'age': 24, 'weight': 72, 'married': False, 'allergies': ['pollen', 'dust'], 'contact_details': {'email': 'abc@gmail.com', 'phone': '1234567890'} }
+patient_info = {'name': 'sushant', 'email': 'abc@gmail.com', 'age': 24, 'weight': 72, 'contact_details': {'email': 'abc@gmail.com', 'phone': '1234567890'}, 'linkedin_url' : 'https://www.linkedin.com/in/sushant-twayana-b4840a254/' }
+
+patient1 = Patient(**patient_info)
+
+# print(patient1)
+
+insert_patient_data(patient1) 
+
+
+#### =========================== Field validation ==================================
+
+from pydantic import BaseModel, EmailStr, AnyUrl, Field
+from typing import List, TypedDict, Dict, Optional
+
+class Patient(BaseModel):
+    name: str = Field(max_length=50)
+    age : int = Field(gt=0, lt= 70)
+    email: EmailStr
+    weight: float = Field(gt=0)
+    married: bool = False
+    linkedin_url: AnyUrl
+    ## default value is none
+    allergies: Optional[List[str]] = Field(max_length=5)                                              #### 2 level validation all values are str inside list
+    contact_details: Dict[str, str]
+    
+def insert_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print(patient.married)
+    print(patient.allergies)
+    print(patient.contact_details)
+    print(patient.linkedin_url)
+    print('inserted')
+    
+def update_patient_data(patient: Patient):
+    
+    print(patient.name)
+    print(patient.age)
+    print('inserted')
+    
+    
+
+# patient_info = {'name': 'sushant', 'age': 24, 'weight': 72, 'married': False, 'allergies': ['pollen', 'dust'], 'contact_details': {'email': 'abc@gmail.com', 'phone': '1234567890'} }
+patient_info = {'name': 'sushant', 'email': 'abc@gmail.com', 'age': 24, 'weight': 72, 'contact_details': {'email': 'abc@gmail.com', 'phone': '1234567890'}, 'linkedin_url' : 'https://www.linkedin.com/in/sushant-twayana-b4840a254/' }
+
+patient1 = Patient(**patient_info)
+
+# print(patient1)
+
+insert_patient_data(patient1) 
