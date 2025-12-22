@@ -1,0 +1,45 @@
+1. Data Preparation
+Loads insurance data from insurance.csv.
+
+Creates new features:
+    - bmi: Body Mass Index, calculated from weight and height.
+    - age_group: Categorizes age into "young", "adult", "middle_aged", "senior".
+    - lifestyle_risk: Based on whether the person is a smoker and their BMI:
+        "high": smoker and BMI > 30
+        "medium": smoker or BMI > 25
+        "low": otherwise
+    - city_tier: Assigns a tier (1, 2, or 3) to the city based on predefined lists.
+
+
+2. Feature Selection
+Selects these features for the model:
+        bmi
+        age_group
+        lifestyle_risk
+        city_tier
+        income_lpa (income in lakhs per annum)
+        occupation
+
+3. Model Pipeline
+    Uses a ColumnTransformer to:
+    One-hot encode categorical features (age_group, lifestyle_risk, occupation, city_tier)
+    Pass through numeric features (bmi, income_lpa)
+    Trains a RandomForestClassifier to predict the target: insurance_premium_category.
+
+
+4. Prediction
+    The model predicts the insurance_premium_category for a given set of features.
+    The categories are likely:
+    low: The person is expected to pay a low insurance premium (lower risk).
+    medium: The person is expected to pay a medium insurance premium (moderate risk).
+    high: The person is expected to pay a high insurance premium (higher risk).
+
+
+What Each Category Signifies
+    low: The user is considered low risk (e.g., non-smoker, healthy BMI, younger, safe occupation/city), so the insurance premium is low.
+    medium: The user has some risk factors (e.g., smoker or high BMI, middle-aged, moderate occupation/city risk), so the premium is moderate.
+    high: The user is high risk (e.g., smoker and high BMI, older, risky occupation/city), so the premium is high.
+
+
+Summary:
+Your model uses demographic and lifestyle features to classify users into low, medium, or high insurance premium categories, which reflect their risk level as assessed by the model.

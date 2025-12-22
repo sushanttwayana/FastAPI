@@ -43,9 +43,7 @@ def predict_insurance_premium(user_input: UserInput):
         return JSONResponse(
         status_code=200,
         content={
-            "response": {
-                "predicted_category": prediction
-            }
+            "response": prediction
         })
         
     except Exception as e:
