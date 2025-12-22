@@ -1,29 +1,7 @@
-from fastapi import  FastAPI, HTTPException
-import pickle
-import json
-import pandas as pd
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, computed_field, field_validator
 from typing import Annotated, Literal
-from fastapi.responses import JSONResponse
+from config.city_tier import tier_1_cities, tier_2_cities
 
-ml_model_path = 'ml_model_training/model.pkl'
-
-#import the ml model
-with open(ml_model_path, 'rb') as f:
-    model = pickle.load(f)
-    
-app = FastAPI()
-
-### user city tier list
-tier_1_cities = ["Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata", "Hyderabad", "Pune"]
-tier_2_cities = [
-    "Jaipur", "Chandigarh", "Indore", "Lucknow", "Patna", "Ranchi", "Visakhapatnam", "Coimbatore",
-    "Bhopal", "Nagpur", "Vadodara", "Surat", "Rajkot", "Jodhpur", "Raipur", "Amritsar", "Varanasi",
-    "Agra", "Dehradun", "Mysore", "Jabalpur", "Guwahati", "Thiruvananthapuram", "Ludhiana", "Nashik",
-    "Allahabad", "Udaipur", "Aurangabad", "Hubli", "Belgaum", "Salem", "Vijayawada", "Tiruchirappalli",
-    "Bhavnagar", "Gwalior", "Dhanbad", "Bareilly", "Aligarh", "Gaya", "Kozhikode", "Warangal",
-    "Kolhapur", "Bilaspur", "Jalandhar", "Noida", "Guntur", "Asansol", "Siliguri"
-]
 
 ## pydantic model to validate incoming data
 class UserInput(BaseModel):
@@ -36,6 +14,14 @@ class UserInput(BaseModel):
     city: Annotated[str, Field(..., description="City of residence")]
     occupation: Annotated[Literal['retired', 'freelancer', 'student', 'government_job','business_owner', 'unemployed', 'private_job', 'it'], Field(..., description="Occupation of the person")]
     
+    ## foe normalizing the city name
+    @field_validator('city')
+    @classmethod
+    def normalize_city(cls, v: str) -> str:
+        
+        v = v.strip().title()
+        return v
+
     
     ### creating the bmi value
     @computed_field
@@ -78,27 +64,3 @@ class UserInput(BaseModel):
             return 2
         else:
             return 3
-        
-@app.post('/patient/predict_insurance_premium')
-def predict_insurance_premium(user_input: UserInput):
-    
-    input_df = pd.DataFrame([{
-        'bmi': user_input.bmi, 
-        'age_group': user_input.age_group,
-        'lifestyle_risk': user_input.lifestyle_risk,
-        'city_tier': user_input.city_tier,
-        'occupation': user_input.occupation,
-        'income_lpa': user_input.income_lpa    
-    }])
-    
-    prediction = model.predict(input_df)[0]
-    
-    # return JSONResponse(status_code=200, content={'predicted_category': prediction})
-    
-    return JSONResponse(
-    status_code=200,
-    content={
-        "response": {
-            "predicted_category": prediction
-        }
-    })
