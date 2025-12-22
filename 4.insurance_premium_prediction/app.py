@@ -5,6 +5,7 @@ import pandas as pd
 from schema.user_input import UserInput
 from fastapi.responses import JSONResponse
 from ml_model_training.predict import predict_output, MODEL_VERSION, model
+from schema.prediction_response import PredictionResponse
  
 app = FastAPI()
         
@@ -22,7 +23,7 @@ def health_check():
         'model_loaded': model is not None,
         }        
         
-@app.post('/patient/predict_insurance_premium')
+@app.post('/patient/predict_insurance_premium', response_model=PredictionResponse)
 def predict_insurance_premium(user_input: UserInput):
     
     user_input = {
